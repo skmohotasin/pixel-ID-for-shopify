@@ -1,6 +1,6 @@
 # pixel-ID-for-shopify
 
-#Customer data-sharing events
+Customer data-sharing events
 
 After you add a Facebook pixel in Shopify, the pixel tracks certain events on your online store, such as when a customer views a certain page. You can use the data from these events to learn more about how customers interact with your store. Learn more about using Facebook pixel events to create campaigns and track conversions at the Facebook Help Center.
 
