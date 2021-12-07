@@ -1,0 +1,46 @@
+<!-- Facebook Pixel Code -->
+{%- if template contains 'product' -%}
+  {%- capture contents -%}{%- for variant in product.variants -%}{ id: '{{ variant.id }}', quantity: '{%- if variant.inventory_quantity > 0 -%}{{ variant.inventory_quantity }}{%- else -%}{{ '1' }}{%- endif -%}'}{%- unless forloop.last -%},{%- endunless -%}{%- assign totalIdjson = totalIdjson | append: '","' | append: variant.id -%}{%- endfor -%}{%- endcapture -%}
+  {%- assign Id = totalIdjson | json | replace: ',\' , ',' | replace: '"\",' , '"' | replace: '\",' , '",' | replace: '""' , '"' | replace: '"' , ''' -%}
+  {%- capture Productpage -%}
+  fbq('track', 'ViewContent',
+          {
+            content_type: 'product',
+            content_ids: [{{ Id }}],
+            value: '{{ product.price | money_without_currency }}',
+            currency: '{{ shop.currency }}',
+            content_name: '{{ product.title | escape }}',
+            product_type: '{{ product.type | escape }}',
+            contents: [{{ contents }}]
+            }
+     );
+  {%- endcapture -%}
+{%- else -%}
+	{%- assign Productpage = '' -%}
+{%- endif -%}
+
+{%- capture facebook_url -%}&ev=PageView&ev={%- if request.path contains 'product' -%}ViewContent{%- endif -%}{%- endcapture -%}
+<script>
+window.addEventListener('DOMContentLoaded', function() {  
+  setTimeout(function(){
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'PIXELID');
+    fbq('track', 'PageView');
+    
+    {{ Productpage }}
+    
+    let noscript = document.createElement('noscript');
+    let content = '<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=PIXELID{{ facebook_url }}&noscript=1" />';
+    document.querySelector('head').append(noscript);
+    noscript.append(content);
+  },1000);
+});
+</script>
+<!-- End Facebook Pixel Code -->
